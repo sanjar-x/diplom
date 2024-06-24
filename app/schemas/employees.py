@@ -112,31 +112,7 @@ class EmployeeResponse(BaseModel):
     contract_date: date
 
 
-class EmployeeFullResponse(BaseModel):
-    employee_id: UUID = Field(title="Employee’s ID", description="Employee’s ID")
-    type: EmployeeType = Field(
-        title="Employee’s type",
-        description="Employee’s type",
-        examples=[
-            "professor_teacher",
-            "administrative_management",
-            "training_assistent",
-            "technik",
-        ],
-    )
-    labor_form: LaborForm = Field(
-        title="Labor Form",
-        description="Labor Form",
-        examples=["main", "replacement_interior", "replacement_extrior", "hourly"],
-    )
-    rate: Rate = Field(title="Rate", description="Rate", examples=[0.25, 0.5, 0.75, 1])
-    status: EmployeeStatus = Field(
-        title="Employee status",
-        description="Employee status",
-        examples=["working", "on_vocation", "on_trip", "dismissed"],
-    )
-    contract_number: int
-    contract_date: date
+class EmployeeFullResponse(EmployeeResponse):
     user: UserResponse
     division: Optional[DivisionResponse]
     department: Optional[DepartmentResponse]

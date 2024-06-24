@@ -3,7 +3,7 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
 from ..dependencies.database_session import get_session
-from ...schemas.user import UserCreate, UserResponse, UserUpdate
+from ...schemas.user import UserCreate, UserResponse, UserFullResponse
 from ...models.models import Role, User
 
 
@@ -35,7 +35,7 @@ async def create_user(
     return user
 
 
-@router.get("/", status_code=status.HTTP_200_OK, response_model=List[UserResponse])
+@router.get("/", status_code=status.HTTP_200_OK, response_model=List[UserFullResponse])
 async def get_users(
     session: AsyncSession = Depends(get_session),
 ):
