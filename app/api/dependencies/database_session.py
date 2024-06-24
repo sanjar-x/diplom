@@ -7,7 +7,7 @@ engine = create_async_engine(
     url=make_url(
         name_or_url="postgresql+asyncpg://postgres:ERstPGPGFFSUABmVrvuWpoHhnVBnpIwB@postgres.railway.internal:5432/railway"
     ),
-    echo=True,
+    echo=False,
     future=True,
 )
 
