@@ -25,3 +25,9 @@ async def get_roles(db_session: AsyncSession = Depends(get_session)):
 
     roles: List[Role] = await Role().find_all(db_session)
     return roles
+
+
+# @router.get("/", status_code=status.HTTP_200_OK, response_model=RoleResponse)
+# async def get_role(role_id: str, db_session: AsyncSession = Depends(get_session)):
+#     role: Role | None = await Role().find(db_session, [Role.role_id == role_id])
+#     return role

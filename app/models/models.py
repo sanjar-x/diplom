@@ -43,13 +43,13 @@ class Gender(Enum):
 
 
 class ScienceDegree(Enum):
-    none = None
+    without = "without"
     doctorofphilosophy = "doctorofphilosophy"
     doctorofscience = "doctorofscience"
 
 
 class ScientificTitle(str, Enum):
-    none = None
+    without = "without"
     docent = "docent"
     professor = "professor"
     senior_researcher = "senior_researcher"
@@ -206,10 +206,27 @@ class User(Base):
         self._password = hashpw(_secret_value.encode("utf-8"), gensalt())
 
     role: Mapped[Role] = relationship("Role", back_populates="users")
-    employee: Mapped[Employee] = relationship("Employee", back_populates="user")
+    employee: Mapped["Employee"] = relationship(
+        "Employee", back_populates="user", cascade="all, delete"
+    )
 
     def check_password(self, password: SecretStr):
         return crypt_context.verify(password.get_secret_value(), self.password)
+
+
+class Division(Base):
+    __tablename__ = "divisions"
+    division_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    name: Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
+    code: Mapped[str] = mapped_column(VARCHAR(3), nullable=False)
+    type: Mapped[Enum] = mapped_column(ENUM(DivisionType))
+    active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
+
+    employees: Mapped[List[Employee]] = relationship(
+        "Employee", back_populates="division"
+    )
 
 
 class Faculty(Base):
@@ -240,17 +257,9 @@ class Department(Base):
     code: Mapped[str] = mapped_column(VARCHAR(2), nullable=False)
     active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
     faculty: Mapped[Faculty] = relationship("Faculty", back_populates="departments")
-
-
-class Division(Base):
-    __tablename__ = "divisions"
-    division_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    employees: Mapped[List[Employee]] = relationship(
+        "Employee", back_populates="department"
     )
-    name: Mapped[str] = mapped_column(VARCHAR(255), nullable=False)
-    code: Mapped[str] = mapped_column(VARCHAR(3), nullable=False)
-    type: Mapped[Enum] = mapped_column(ENUM(DivisionType))
-    active: Mapped[bool] = mapped_column(BOOLEAN, default=True)
 
 
 class Positions(Base):
@@ -263,15 +272,19 @@ class Positions(Base):
 
 
 class Employee(Base):
-    __tablename__ = "employies"
+    __tablename__ = "employees"
     employee_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     user_id: Mapped[uuid.UUID] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("users.user_id")
+        UUID(as_uuid=True), ForeignKey("users.user_id", ondelete="CASCADE")
     )
-    department_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
-    division_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True))
+    division_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("divisions.division_id"), nullable=True
+    )
+    department_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("departments.department_id"), nullable=True
+    )
     type: Mapped[Enum] = mapped_column(
         ENUM(EmployeeType), default=EmployeeType.professor_teacher
     )
@@ -280,8 +293,13 @@ class Employee(Base):
     status: Mapped[Enum] = mapped_column(ENUM(EmployeeStatus))
     contract_number: Mapped[int] = mapped_column(INTEGER, nullable=False)
     contract_date: Mapped[date] = mapped_column(DATE)
-
-    user: Mapped[User] = relationship("User", back_populates="employee")
+    user: Mapped[User] = relationship(
+        "User", back_populates="employee", cascade="all, delete"
+    )
+    division: Mapped[Division] = relationship("Division", back_populates="employees")
+    department: Mapped[Department] = relationship(
+        "Department", back_populates="employees"
+    )
 
 
 class QualificationPlace(Base):

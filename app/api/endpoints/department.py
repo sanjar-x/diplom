@@ -3,7 +3,11 @@ from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, status
 from ..dependencies.database_session import get_session
-from ...schemas.department import DepartmentCreate, DepartmentResponse
+from ...schemas.department import (
+    DepartmentCreate,
+    DepartmentResponse,
+    DepartmentFullResponse,
+)
 from ...models.models import Department
 
 
@@ -23,7 +27,7 @@ async def create_department(
 
 
 @router.get(
-    "/", status_code=status.HTTP_200_OK, response_model=List[DepartmentResponse]
+    "/", status_code=status.HTTP_200_OK, response_model=List[DepartmentFullResponse]
 )
 async def get_departments(db_session: AsyncSession = Depends(get_session)):
     departments: List[Department] = await Department().find_all_with(

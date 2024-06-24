@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Annotated
+from uuid import UUID
 from pydantic import (
     BaseModel,
     Field,
@@ -49,6 +50,7 @@ class DivisionCreate(BaseModel):
 
 
 class DivisionResponse(BaseModel):
+    division_id: UUID
     name: str = Field(
         title="Division’s name",
         description="Division’s name",

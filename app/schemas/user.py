@@ -28,13 +28,13 @@ class Gender(str, Enum):
 
 
 class ScienceDegree(str, Enum):
-    none = None
+    without = "without"
     doctorofphilosophy = "doctorofphilosophy"
     doctorofscience = "doctorofscience"
 
 
 class ScientificTitle(str, Enum):
-    none = None
+    without = "without"
     docent = "docent"
     professor = "professor"
     senior_researcher = "senior_researcher"
@@ -71,6 +71,7 @@ class User(BaseModel):
 
 class UserCreate(BaseModel):
     model_config = config
+    role_name: str = Field(title="Role’s name", description="Role’s name")
     phone_number: str = Field(
         title="User’s phone number",
         description="User’s phone number",
@@ -101,15 +102,27 @@ class UserCreate(BaseModel):
         ],
     )
     specialization: str
-    science_degree: ScienceDegree
-    scientific_title: ScientificTitle
+    science_degree: ScienceDegree = Field(
+        title="User’s science degree",
+        description="User’s science degree",
+        examples=["without", "doctorofphilosophy", "doctorofscience"],
+    )
+    scientific_title: ScientificTitle = Field(
+        title="User’s science title",
+        description="User’s science title",
+        examples=["without", "docent", "professor", "senior_researcher", "academician"],
+    )
     first_name: str = Field(
         title="User’s first name", description="User’s first name", examples=["Anvar"]
     )
     last_name: str = Field(
         title="User’s last name", description="User’s last name", examples=["Anvarov"]
     )
-    middle_name: str
+    middle_name: str = Field(
+        title="User’s last name",
+        description="User’s last name",
+        examples=["Anvarovich"],
+    )
     password: SecretStr = Field(
         title="User’s password",
         description="User’s password",
@@ -117,16 +130,61 @@ class UserCreate(BaseModel):
         min_length=6,
         max_length=32,
     )
-    role_id: UUID = Field(title="Role’s id", description="Role’s id")
 
 
 class UserResponse(BaseModel):
+    model_config = config
     user_id: UUID = Field(title="User’s id", description="User’s id")
-    image: Optional[str] = Field(title="User’s image", description="User’s image")
-    first_name: str = Field(title="User’s first name", description="User’s first name")
-    last_name: str = Field(title="User’s last name", description="User’s last name")
     phone_number: str = Field(
-        title="User’s phone number", description="User’s phone number"
+        title="User’s phone number",
+        description="User’s phone number",
+        examples=["+998901234567"],
+    )
+    citizenship: Citizenship = Field(
+        title="User’s citizenship",
+        description="User’s citizenship",
+        examples=["uzbekistan", "foreign", "without_citizenship"],
+    )
+    passport: Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}\d{7}$")]
+    pini: Annotated[str, StringConstraints(pattern=r"^\d{14}$")] = Field(
+        title="User’s personal identify number",
+        description="User’s personal identify number",
+        examples=["40608200485164"],
+    )
+    birth_date: date
+    gender: Gender = Field(
+        title="User’s gender",
+        description="User’s gender",
+        examples=["male", "female"],
+    )
+    address: str = Field(
+        title="User’s address",
+        description="User’s address",
+        examples=[
+            "Namangan viloyati, Turaqo'rg'on tumani, Sharq MFY, Bog' ko'cha 18-uy"
+        ],
+    )
+    specialization: str
+    science_degree: ScienceDegree = Field(
+        title="User’s science degree",
+        description="User’s science degree",
+        examples=["without", "doctorofphilosophy", "doctorofscience"],
+    )
+    scientific_title: ScientificTitle = Field(
+        title="User’s science title",
+        description="User’s science title",
+        examples=["without", "docent", "professor", "senior_researcher", "academician"],
+    )
+    first_name: str = Field(
+        title="User’s first name", description="User’s first name", examples=["Anvar"]
+    )
+    last_name: str = Field(
+        title="User’s last name", description="User’s last name", examples=["Anvarov"]
+    )
+    middle_name: str = Field(
+        title="User’s last name",
+        description="User’s last name",
+        examples=["Anvarovich"],
     )
 
 
@@ -151,46 +209,3 @@ class UserLogin(BaseModel):
         min_length=6,
         max_length=32,
     )
-
-
-class FacultyType(str, Enum):
-    local = "local"
-    joint = "joint"
-    division = "division"
-    other = "other"
-
-
-class DivisionType(str, Enum):
-    division = "division"
-    administration = "administration"
-    center = "center"  # type: ignore
-    other = "other"
-
-
-class EmployeeType(str, Enum):
-    professor_teacher = "professor_teacher"
-    administrative_management = "administrative_management"
-    training_assistent = "training_assistent"
-    technik = "technik"
-    servise = "servise"
-
-
-class LaborForm(str, Enum):
-    main = "main"
-    replacement_interior = "replacement_interior"
-    replacement_extrior = "replacement_extrior"
-    hourly = "hourly"
-
-
-class Rate(float, Enum):
-    quarter = 0.25
-    half = 0.5
-    three_quarters = 0.75
-    one = 1.0
-
-
-class EmployeeStatus(str, Enum):
-    working = "working"
-    on_vocation = "on_vocation"
-    on_trip = "on_trip"
-    dismissed = "dismissed"
