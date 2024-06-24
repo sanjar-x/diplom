@@ -5,13 +5,14 @@ from sqlalchemy.ext.asyncio.session import AsyncSession, async_sessionmaker
 
 engine = create_async_engine(
     url=make_url(
-        name_or_url="postgresql+asyncpg://root:iam3489495@localhost:5432/test"
+        name_or_url="postgresql+asyncpg://postgres:ERstPGPGFFSUABmVrvuWpoHhnVBnpIwB@postgres.railway.internal:5432/railway"
     ),
     echo=True,
     future=True,
 )
 
 async_session = async_sessionmaker(engine, autoflush=False, expire_on_commit=False)
+
 
 async def get_session() -> AsyncGenerator:
     async with async_session() as session:
