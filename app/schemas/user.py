@@ -189,7 +189,7 @@ class UserResponse(BaseModel):
         description="User’s last name",
         examples=["Anvarovich"],
     )
-    role: RoleResponse
+    role: Optional[RoleResponse] = None
 
 
 class UserUpdate(BaseModel):
