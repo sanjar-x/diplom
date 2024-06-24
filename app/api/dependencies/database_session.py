@@ -7,9 +7,16 @@ engine = create_async_engine(
     url=make_url(
         name_or_url="postgresql+asyncpg://postgres:ERstPGPGFFSUABmVrvuWpoHhnVBnpIwB@postgres.railway.internal:5432/railway"
     ),
-    echo=False,
+    echo=True,
     future=True,
 )
+# engine = create_async_engine(
+#     url=make_url(
+#         name_or_url="postgresql+asyncpg://root:iam3489495@localhost:5432/test"
+#     ),
+#     echo=False,
+#     future=True,
+# )
 
 async_session = async_sessionmaker(engine, autoflush=False, expire_on_commit=False)
 

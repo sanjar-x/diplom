@@ -12,19 +12,19 @@ router = APIRouter(prefix="/employees")
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=EmployeeResponse)
 async def create_employee(
     payload: EmployeeCreate,
-    db_session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
     employee: Employee = Employee(**payload.model_dump())
-    await employee.save(db_session)
+    await employee.save(session)
     return employee
 
 
 @router.get(
     "/", status_code=status.HTTP_200_OK, response_model=List[EmployeeFullResponse]
 )
-async def get_employees(db_session: AsyncSession = Depends(get_session)):
+async def get_employees(session: AsyncSession = Depends(get_session)):
     employees = await Employee().find_all_with(
-        db_session,
+        session,
         [
             joinedload(Employee.user),
             joinedload(Employee.division),
@@ -37,14 +37,14 @@ async def get_employees(db_session: AsyncSession = Depends(get_session)):
 @router.delete("/", status_code=status.HTTP_200_OK)
 async def delet_role(
     employee_id,
-    db_session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
     employee: Employee | None = await Employee().find(
-        db_session,
+        session,
         [
             Employee.employee_id == employee_id,
         ],
     )
     if employee:
-        await employee.delete(db_session)
+        await employee.delete(session)
     return {"message": "employee deleted"}

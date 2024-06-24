@@ -71,7 +71,7 @@ class User(BaseModel):
 
 class UserCreate(BaseModel):
     model_config = config
-    role_name: str = Field(title="Role’s name", description="Role’s name")
+    role_name: str = Field(title="Role’s name", description="Role’s name", examples=["user"])
     phone_number: str = Field(
         title="User’s phone number",
         description="User’s phone number",
@@ -184,6 +184,82 @@ class UserResponse(BaseModel):
     middle_name: str = Field(
         title="User’s last name",
         description="User’s last name",
+        examples=["Anvarovich"],
+    )
+
+
+class UserUpdate(BaseModel):
+    user_id: Optional[UUID] = Field(
+        default=None, title="User’s id", description="User’s id"
+    )
+    role_name: Optional[str] = Field(
+        default=None, title="Role’s name", description="Role’s name"
+    )
+    phone_number: Optional[str] = Field(
+        default=None,
+        title="User’s phone number",
+        description="User’s phone number",
+        examples=["+998901234567"],
+    )
+    citizenship: Optional[Citizenship] = Field(
+        default=None,
+        title="User’s citizenship",
+        description="User’s citizenship",
+        examples=["uzbekistan", "foreign", "without_citizenship"],
+    )
+    passport: Optional[
+        Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}\d{7}$")]
+    ] = None
+    pini: Optional[Annotated[str, StringConstraints(pattern=r"^\d{14}$")]] = Field(
+        default=None,
+        title="User’s personal identify number",
+        description="User’s personal identify number",
+        examples=["40608200485164"],
+    )
+    birth_date: Optional[date] = None
+    gender: Optional[Gender] = Field(
+        default=None,
+        title="User’s gender",
+        description="User’s gender",
+        examples=["male", "female"],
+    )
+    address: Optional[str] = Field(
+        default=None,
+        title="User’s address",
+        description="User’s address",
+        examples=[
+            "Namangan viloyati, Turaqo'rg'on tumani, Sharq MFY, Bog' ko'cha 18-uy"
+        ],
+    )
+    specialization: Optional[str] = None
+    science_degree: Optional[ScienceDegree] = Field(
+        default=None,
+        title="User’s science degree",
+        description="User’s science degree",
+        examples=["without", "doctorofphilosophy", "doctorofscience"],
+    )
+    scientific_title: Optional[ScientificTitle] = Field(
+        default=None,
+        title="User’s science title",
+        description="User’s science title",
+        examples=["without", "docent", "professor", "senior_researcher", "academician"],
+    )
+    first_name: Optional[str] = Field(
+        default=None,
+        title="User’s first name",
+        description="User’s first name",
+        examples=["Anvar"],
+    )
+    last_name: Optional[str] = Field(
+        default=None,
+        title="User’s last name",
+        description="User’s last name",
+        examples=["Anvarov"],
+    )
+    middle_name: Optional[str] = Field(
+        default=None,
+        title="User’s middle name",
+        description="User’s middle name",
         examples=["Anvarovich"],
     )
 

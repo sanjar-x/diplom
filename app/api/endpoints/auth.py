@@ -17,10 +17,10 @@ router = APIRouter(prefix="/auth")
 )
 async def get_token_for_user(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-    db_session: AsyncSession = Depends(get_session),
+    session: AsyncSession = Depends(get_session),
 ):
     user: User | None = await User.find(
-        db_session, [User.phone_number == form_data.username]
+        session, [User.phone_number == form_data.username]
     )
 
     if not user:

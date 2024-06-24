@@ -1,3 +1,4 @@
 .vscode
 venv
 commands.txt
+**/__pycache__/
