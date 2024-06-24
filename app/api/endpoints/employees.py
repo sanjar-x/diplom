@@ -32,3 +32,19 @@ async def get_employees(db_session: AsyncSession = Depends(get_session)):
         ],
     )
     return employees
+
+
+@router.delete("/", status_code=status.HTTP_200_OK)
+async def delet_role(
+    employee_id,
+    db_session: AsyncSession = Depends(get_session),
+):
+    employee: Employee | None = await Employee().find(
+        db_session,
+        [
+            Employee.employee_id == employee_id,
+        ],
+    )
+    if employee:
+        await employee.delete(db_session)
+    return {"message": "employee deleted"}

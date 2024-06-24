@@ -34,3 +34,16 @@ async def get_departments(db_session: AsyncSession = Depends(get_session)):
         db_session, [joinedload(Department.faculty)]
     )
     return departments
+
+
+@router.delete("/", status_code=status.HTTP_200_OK)
+async def delet_department(
+    department_id,
+    db_session: AsyncSession = Depends(get_session),
+):
+    department: Department | None = await Department().find(
+        db_session, [Department.department_id == department_id]
+    )
+    if department:
+        await department.delete(db_session)
+    return {"message": "department deleted"}

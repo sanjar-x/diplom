@@ -24,3 +24,16 @@ async def create_faculty(
 async def get_faculties(db_session: AsyncSession = Depends(get_session)):
     faculties: List[Faculty] = await Faculty().find_all(db_session)
     return faculties
+
+
+@router.delete("/", status_code=status.HTTP_200_OK)
+async def delet_faculty(
+    faculty_id,
+    db_session: AsyncSession = Depends(get_session),
+):
+    faculty: Faculty | None = await Faculty().find(
+        db_session, [Faculty.faculty_id == faculty_id]
+    )
+    if faculty:
+        await faculty.delete(db_session)
+    return {"message": "faculty deleted"}

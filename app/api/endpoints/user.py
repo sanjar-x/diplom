@@ -32,3 +32,14 @@ async def get_users(
     db_session: AsyncSession = Depends(get_session),
 ):
     return await User().find_all_with(db_session, options=[joinedload(User.role)])
+
+
+@router.delete("/", status_code=status.HTTP_200_OK)
+async def delet_user(
+    user_id,
+    db_session: AsyncSession = Depends(get_session),
+):
+    user: User | None = await User().find(db_session, [User.user_id == user_id])
+    if user:
+        await user.delete(db_session)
+    return {"message": "user deleted"}
