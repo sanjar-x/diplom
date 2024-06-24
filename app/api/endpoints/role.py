@@ -1,7 +1,7 @@
 from typing import List
 from sqlalchemy.orm import joinedload
 from sqlalchemy.ext.asyncio import AsyncSession
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from ..dependencies.database_session import get_session
 from ...schemas.role import RoleCreate, RoleResponse
 from ...models.models import Role
@@ -15,6 +15,12 @@ async def create_role(
     payload: RoleCreate,
     session: AsyncSession = Depends(get_session),
 ):
+    exist_role: Role | None = await Role().find(session, [Role.name == payload.name])
+    if exist_role:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Role {payload.name} already exist",
+        )
     role: Role = Role(**payload.model_dump())
     await role.save(session)
     return role

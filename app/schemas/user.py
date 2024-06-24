@@ -11,6 +11,7 @@ from pydantic import (
     StringConstraints,
     constr,
 )
+from .role import RoleResponse
 
 
 config = ConfigDict(from_attributes=True)
@@ -71,7 +72,9 @@ class User(BaseModel):
 
 class UserCreate(BaseModel):
     model_config = config
-    role_name: str = Field(title="Role’s name", description="Role’s name", examples=["user"])
+    role_name: str = Field(
+        title="Role’s name", description="Role’s name", examples=["user"]
+    )
     phone_number: str = Field(
         title="User’s phone number",
         description="User’s phone number",
@@ -186,6 +189,7 @@ class UserResponse(BaseModel):
         description="User’s last name",
         examples=["Anvarovich"],
     )
+    role: RoleResponse
 
 
 class UserUpdate(BaseModel):
